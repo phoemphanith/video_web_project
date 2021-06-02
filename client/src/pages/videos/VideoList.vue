@@ -3,17 +3,29 @@
     <the-header></the-header>
     <section>
       <div class="container">
-        <section>FILTER</section>
+        <section class="row-box" style="background-color: red">
+          FILTER
+          <span
+            class="filter-option"
+            v-for="category in getCategories"
+            :key="category._id"
+          >
+            <input type="checkbox" :id="category.name" />
+            <label for="">{{ category.name }}</label>
+          </span>
+        </section>
         <div class="row-box">
           <div class="col-box" v-for="video in getVideos" :key="video._id">
-            <router-link :to="`/videos/${video._id}`">
+            <router-link :to="`/videos/${video._id}`" v-on:click="video.view++">
               <video width="200">
                 <source :src="video.video_file" type="video/mp4" />
                 Your browser does not support HTML video.
               </video>
             </router-link>
-            <h3>{{ video.name }}</h3>
-            <h4>{{ getUsers.find(user => user._id === video.user).name }}</h4>
+            <h3>{{ video.name }} ({{ video.category }})</h3>
+            <h4>
+              {{ getUsers.find(user => user._id === video.user).name }}
+            </h4>
             <p>
               {{ video.view }} views | Post on
               {{ new Date(video.publicDate).toLocaleDateString() }}
@@ -35,10 +47,10 @@ export default {
     TheHeader
   },
   methods: {
-    ...mapActions(['fetchVideos', 'fetchUsers'])
+    ...mapActions(['fetchVideos', 'fetchUsers', 'fetchCategories'])
   },
   computed: {
-    ...mapGetters(['getVideos', 'getUsers'])
+    ...mapGetters(['getVideos', 'getUsers', 'getCategories'])
     // filteredVideos() {
     //   return this.$store.getters['videos/videos'];
     // },
@@ -49,6 +61,7 @@ export default {
   created() {
     this.fetchUsers();
     this.fetchVideos();
+    this.fetchCategories();
   }
 };
 </script>

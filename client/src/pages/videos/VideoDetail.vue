@@ -1,6 +1,7 @@
 <template>
   <div>
     <the-header></the-header>
+    {{ selectedVideo._id }}
     <body class="p-4">
       <div class="container bg-white rounded-lg overflow-hidden shadow">
         <div class="row">
@@ -16,6 +17,32 @@
               <div class="col-12">
                 <div>
                   <h4 class="font-weight-bold">{{ selectedVideo.name }}</h4>
+                  <button
+                    v-bind:class="{
+                      whiteLike: clickedLike,
+                      blueLike: !clickedLike,
+                    }"
+                    v-on:click="increaseLike(clickedLike)"
+                  >
+                    <i class="far fa-thumbs-up"></i>
+                  </button>
+                  <p>{{ selectedVideo.like }}</p>
+                  <button
+                    v-bind:class="{
+                      white: clickedDislike,
+                      blue: !clickedDislike,
+                    }"
+                    v-on:click="increaseDislike(clickedDislike)"
+                  >
+                    <i class="far fa-thumbs-down"></i>
+                  </button>
+                  <p>{{ selectedVideo.dislike }}</p>
+                  <i class="fas fa-coins"></i>
+                  <form @submit.prevent="rewardCoins">
+                    <input type="number" v-model="coins" />
+                    <button type="submit">Submit</button>
+                    <p>{{ selectedVideo.rewardPoint }} Coins</p>
+                  </form>
                   <p class="text-muted">
                     {{ selectedVideo.view }} views -
                     {{
@@ -35,10 +62,7 @@
                   </div>
                   <div class="col px-0">
                     <h6 class="font-weight-bold mb-0">
-                      {{
-                        getUsers.find(user => user._id === selectedVideo.user)
-                          .name
-                      }}
+                      {{ selectedVideo.user }}
                     </h6>
                     <p class="font-italic text-muted mb-0">Autor</p>
                   </div>
@@ -421,30 +445,70 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import TheHeader from '../../components/layout/TheHeader.vue';
+import axios from "axios";
+
+import { mapGetters } from "vuex";
+import TheHeader from "../../components/layout/TheHeader.vue";
 export default {
-  props: ['id'],
   components: {
-    TheHeader
+    TheHeader,
   },
   data() {
     return {
-      selectedVideo: null
+      selectedVideo: null,
+      clickedLike: true,
+      clickedDislike: true,
+      coins: 0,
     };
   },
-  methods: {},
+  methods: {
+    increaseLike: async function (clickedLike) {
+      if (clickedLike) {
+        (this.clickedLike = false),
+          (this.selectedVideo.like = this.selectedVideo.like + 1);
+      } else {
+        (this.clickedLike = true),
+          (this.selectedVideo.like = this.selectedVideo.like - 1);
+      }
+      await axios.patch(
+        `http://localhost:5000/api/videos/${this.selectedVideo._id}`,
+        {
+          like: this.selectedVideo.like,
+        }
+      );
+    },
+    increaseDislike: async function (clickedDislike) {
+      if (clickedDislike) {
+        this.clickedDislike = false;
+        this.selectedVideo.dislike = this.selectedVideo.dislike + 1;
+      } else {
+        this.clickedDislike = true;
+        this.selectedVideo.dislike = this.selectedVideo.dislike - 1;
+      }
+      await axios.patch(
+        `http://localhost:5000/api/videos/${this.selectedVideo._id}`,
+        {
+          dislike: this.selectedVideo.dislike,
+        }
+      );
+    },
+    rewardCoins: function () {
+      this.selectedVideo.rewardPoint =
+        parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
+      this.coins = 0;
+    },
+  },
   computed: {
-    ...mapGetters(['getVideos', 'getUsers'])
+    ...mapGetters(["getVideos"]),
   },
   created() {
     // this.selectedVideo = this.$store.getters['videos/videos'].find(
     //   video => video.id === this.id
     // );
     this.selectedVideo = this.getVideos.find(
-      video => video._id === this.$route.params.id
+      (video) => video._id === this.$route.params.id
     );
-  }
+  },
 };
 </script>
 
@@ -470,5 +534,21 @@ export default {
 }
 img.profile {
   object-fit: cover;
+}
+
+.white {
+  background-color: white;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.whiteLike {
+  background-color: white;
+}
+
+.blueLike {
+  background-color: blue;
 }
 </style>

@@ -8,7 +8,8 @@ export default {
   state() {
     return {
       videos: [],
-      vidoe: null
+      vidoe: null,
+      categories: []
     };
   },
   mutations: {
@@ -17,6 +18,9 @@ export default {
     },
     setVideo(state, payload) {
       state.video = payload;
+    },
+    setCategories(state, payload) {
+      state.categories = payload;
     },
     removeVideo(state, payload) {
       state.videos = state.videos.filter(video => video._id !== payload);
@@ -43,6 +47,10 @@ export default {
       await axios.delete(`http://localhost:5000/api/videos/${id}`);
 
       context.commit('removeVideo', id);
+    },
+    async fetchCategories(context) {
+      const res = await axios.get('http://localhost:5000/api/categories');
+      context.commit('setCategories', res.data);
     }
     // async fetchVideo(context) {
     //   const res = await axios.get('http://localhost:5000/api/videos/:id');
@@ -56,6 +64,9 @@ export default {
     },
     getVideo(state) {
       return state.video;
+    },
+    getCategories(state) {
+      return state.categories;
     }
     // getVideo(state) {
     //   return state.video._id;

@@ -20,6 +20,7 @@ app.use(
   })
 );
 app.use(cors());
+app.use(express.json());
 
 //* Make Images "Uploads" Folder Publicly Available
 app.use("/public", express.static("public"));
