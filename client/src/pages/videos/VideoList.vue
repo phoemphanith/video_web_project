@@ -2,17 +2,9 @@
   <div>
     <the-header></the-header>
     <section>
-      <div class="container">
+      <div class="container-sm">
         <section class="row-box" style="background-color: red">
           FILTER
-          <span
-            class="filter-option"
-            v-for="category in getCategories"
-            :key="category._id"
-          >
-            <input type="checkbox" :id="category.name" />
-            <label for="">{{ category.name }}</label>
-          </span>
         </section>
         <div class="row-box">
           <div class="col-box" v-for="video in getVideos" :key="video._id">
@@ -67,6 +59,9 @@ export default {
 </script>
 
 <style scoped>
+section {
+  margin: 2% 5%;
+}
 video {
   width: 100%;
 }

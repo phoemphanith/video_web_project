@@ -1,11 +1,13 @@
 <template>
   <div>
     <the-header></the-header>
-    {{ selectedVideo._id }}
     <body class="p-4">
-      <div class="container bg-white rounded-lg overflow-hidden shadow">
+      <div
+        class="container-sm bg-white rounded-lg overflow-hidden shadow"
+        style="background-color: red"
+      >
         <div class="row">
-          <div class="col-md-7 col-12">
+          <div class="col-md-9 col-12">
             <div class="row">
               <div class="col-12 p-0">
                 <video class="w-100" controls>
@@ -17,38 +19,51 @@
               <div class="col-12">
                 <div>
                   <h4 class="font-weight-bold">{{ selectedVideo.name }}</h4>
-                  <button
-                    v-bind:class="{
-                      whiteLike: clickedLike,
-                      blueLike: !clickedLike,
-                    }"
-                    v-on:click="increaseLike(clickedLike)"
-                  >
-                    <i class="far fa-thumbs-up"></i>
-                  </button>
-                  <p>{{ selectedVideo.like }}</p>
-                  <button
-                    v-bind:class="{
-                      white: clickedDislike,
-                      blue: !clickedDislike,
-                    }"
-                    v-on:click="increaseDislike(clickedDislike)"
-                  >
-                    <i class="far fa-thumbs-down"></i>
-                  </button>
-                  <p>{{ selectedVideo.dislike }}</p>
-                  <i class="fas fa-coins"></i>
-                  <form @submit.prevent="rewardCoins">
-                    <input type="number" v-model="coins" />
-                    <button type="submit">Submit</button>
-                    <p>{{ selectedVideo.rewardPoint }} Coins</p>
-                  </form>
-                  <p class="text-muted">
-                    {{ selectedVideo.view }} views -
-                    {{
-                      new Date(selectedVideo.publicDate).toLocaleDateString()
-                    }}
-                  </p>
+                  <table>
+                    <tr>
+                      <td>
+                        <p class="text-muted">
+                          {{ selectedVideo.view }} views -
+                          {{ selectedVideo.rewardPoint }} Coins -
+                          {{
+                            new Date(
+                              selectedVideo.publicDate
+                            ).toLocaleDateString()
+                          }}
+                        </p>
+                      </td>
+                      <td>
+                        <div class="reward-options">
+                          <button
+                            v-bind:class="{
+                              whiteLike: clickedLike,
+                              blueLike: !clickedLike
+                            }"
+                            v-on:click="increaseLike(clickedLike)"
+                          >
+                            <i class="far fa-thumbs-up"></i>
+                          </button>
+                          <span>{{ selectedVideo.like }} likes</span>
+                          <button
+                            v-bind:class="{
+                              white: clickedDislike,
+                              blue: !clickedDislike
+                            }"
+                            v-on:click="increaseDislike(clickedDislike)"
+                          >
+                            <i class="far fa-thumbs-down"></i>
+                          </button>
+                          <span>{{ selectedVideo.dislike }} dislikes</span>
+                          <i class="fas fa-coins"></i>
+                          <form @submit.prevent="rewardCoins">
+                            <input type="number" v-model="coins" />
+                            <button type="submit">Submit</button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+
                   <hr />
                 </div>
                 <div class="row">
@@ -77,7 +92,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-5 col-12 p-0 border-md-left">
+          <div class="col-md-3 col-12 p-0 border-md-left">
             <div class="d-flex flex-column align-items-stretch h-100">
               <div class="bg-light border-bottom pl-3">
                 <h6 class="mt-2 font-weight-bold">comments</h6>
@@ -445,24 +460,24 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
-import { mapGetters } from "vuex";
-import TheHeader from "../../components/layout/TheHeader.vue";
+import { mapGetters } from 'vuex';
+import TheHeader from '../../components/layout/TheHeader.vue';
 export default {
   components: {
-    TheHeader,
+    TheHeader
   },
   data() {
     return {
       selectedVideo: null,
       clickedLike: true,
       clickedDislike: true,
-      coins: 0,
+      coins: 0
     };
   },
   methods: {
-    increaseLike: async function (clickedLike) {
+    increaseLike: async function(clickedLike) {
       if (clickedLike) {
         (this.clickedLike = false),
           (this.selectedVideo.like = this.selectedVideo.like + 1);
@@ -473,11 +488,11 @@ export default {
       await axios.patch(
         `http://localhost:5000/api/videos/${this.selectedVideo._id}`,
         {
-          like: this.selectedVideo.like,
+          like: this.selectedVideo.like
         }
       );
     },
-    increaseDislike: async function (clickedDislike) {
+    increaseDislike: async function(clickedDislike) {
       if (clickedDislike) {
         this.clickedDislike = false;
         this.selectedVideo.dislike = this.selectedVideo.dislike + 1;
@@ -488,31 +503,34 @@ export default {
       await axios.patch(
         `http://localhost:5000/api/videos/${this.selectedVideo._id}`,
         {
-          dislike: this.selectedVideo.dislike,
+          dislike: this.selectedVideo.dislike
         }
       );
     },
-    rewardCoins: function () {
+    rewardCoins: function() {
       this.selectedVideo.rewardPoint =
         parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
       this.coins = 0;
-    },
+    }
   },
   computed: {
-    ...mapGetters(["getVideos"]),
+    ...mapGetters(['getVideos'])
   },
   created() {
     // this.selectedVideo = this.$store.getters['videos/videos'].find(
     //   video => video.id === this.id
     // );
     this.selectedVideo = this.getVideos.find(
-      (video) => video._id === this.$route.params.id
+      video => video._id === this.$route.params.id
     );
-  },
+  }
 };
 </script>
 
 <style scoped>
+body {
+  margin: 2% 10%;
+}
 .btn-icon {
   width: 44px;
   height: 44px;
@@ -550,5 +568,13 @@ img.profile {
 
 .blueLike {
   background-color: blue;
+}
+.reward-options {
+  display: flex;
+  right: inherit;
+}
+
+form {
+  display: flex;
 }
 </style>

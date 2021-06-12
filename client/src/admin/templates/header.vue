@@ -5,10 +5,6 @@
       <router-link to="/admin/upload" class="btn-upload">
         <i class="fas fa-upload"></i> Upload
       </router-link>
-      <button class="user-setting">
-        <div class="user-img"></div>
-        <i class="fas fa-angle-down"></i>
-      </button>
     </div>
   </div>
 </template>

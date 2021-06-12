@@ -11,7 +11,7 @@ const getAllUser = asyncHandler(async (req, res) => {
     const response = await User.find({});
     res.json(response);
   } catch (error) {
-    throw new Error(`Someting wrong: ${error}`);
+    throw new Error(`Not Authorization: ${error}`);
   }
 });
 
@@ -46,7 +46,7 @@ const userRegister = asyncHandler(async (req, res) => {
   const userExit = await User.findOne({ email });
   if (userExit) {
     res.status(400);
-    throw new Error("User already exits");
+    throw new Error("Email already exits");
   }
 
   const user = await User.create({
