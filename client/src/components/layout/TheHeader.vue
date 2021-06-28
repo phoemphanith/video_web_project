@@ -121,6 +121,7 @@ li {
 .list-container {
   position: relative;
   min-width: 100px;
+  z-index: 10;
 }
 .user-list {
   position: absolute;
