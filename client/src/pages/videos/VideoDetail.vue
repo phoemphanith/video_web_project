@@ -112,7 +112,7 @@
                     aria-live="assertive"
                     aria-atomic="true"
                     data-autohide="false"
-                    v-for="comment in getComments.comments"
+                    v-for="comment in getComments"
                     :key="comment._id"
                   >
                     <div class="toast-header">

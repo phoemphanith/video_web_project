@@ -95,9 +95,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access   Private
 const userBuyCoin = asyncHandler(async (req, res) => {
   const { rewardPoint } = req.body;
-
-  await User.updateOne({ _id: req.user._id }, { rewardPoint: rewardPoint });
-  console.log(rewardPoint);
+  const userId = req.params.id;
+  try {
+    await User.updateOne({ _id: userId }, { rewardPoint: rewardPoint });
+    res.json({ message: "User by coin complete" });
+  } catch (error) {
+    throw new Error("Cannot buy");
+  }
 });
 
 // @desc     Banned user

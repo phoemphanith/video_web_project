@@ -55,6 +55,6 @@ router.route("/profile").get(protect, getUserProfile);
 
 router.get("/", getAllUser);
 
-router.route("/userbuy").patch(protect, userBuyCoin);
+router.route("/:id/userbuy").patch(userBuyCoin);
 
 module.exports = router;

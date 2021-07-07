@@ -74,10 +74,8 @@ export default {
       }
     },
     async userBuy(context, data) {
-      context.state.userData.rewardPoint += data;
-      console.log(context.state.userData.rewardPoint);
-      await axios.patch('http://localhost:5000/api/user/userbuy', {
-        rewardPoint: context.state.userData.rewardPoint
+      await axios.patch(`http://localhost:5000/api/user/${data.id}/userbuy`, {
+        rewardPoint: data.point
       });
     }
   }

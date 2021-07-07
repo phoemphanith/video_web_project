@@ -28,7 +28,7 @@ export default {
       state.videos = state.videos.filter(video => video._id !== payload);
     },
     setComments(state, payload) {
-      state.comments = payload;
+      state.comments = payload.comments;
     },
     setUserVideos(state, payload) {
       state.userVideos = payload;

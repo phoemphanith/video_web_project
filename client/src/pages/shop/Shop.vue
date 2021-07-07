@@ -83,7 +83,7 @@ export default {
         this.active = false;
         var currentPoint = this.getUser.rewardPoint + myCoin;
         console.log(currentPoint);
-        this.userBuy(myCoin);
+        this.userBuy({ id: this.getUser._id, point: currentPoint });
       } else {
         this.active = true;
       }
