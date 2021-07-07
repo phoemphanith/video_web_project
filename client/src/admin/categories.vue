@@ -28,7 +28,7 @@
             <td>{{ d.name }}</td>
             <td>{{ new Date(d.created_on).toLocaleDateString() }}</td>
             <td>
-              <button class="btn-delete" @click="deleteCategory(d._id)">
+              <button class="btn-delete" @click="deleteCat(d._id)">
                 <i class="fas fa-trash"></i> Delete
               </button>
             </td>
@@ -54,6 +54,11 @@ export default {
     addNewCate() {
       this.addNewCategory(this.name);
       this.name = '';
+    },
+    deleteCat(id) {
+      this.deleteCategory(id).then(() => {
+        this.$router.go();
+      });
     }
   },
   computed: {

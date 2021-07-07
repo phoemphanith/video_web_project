@@ -1,24 +1,64 @@
 <template>
   <section>
-    <div>
-      <h1>{{ getUser.name }}</h1>
-      <p>Email: {{ getUser.email }}</p>
-      <p>Role: {{ getUser.isAdmin ? 'Admin' : 'Member' }}</p>
-      <button @click="sigout">Logout</button>
+    <div class="card">
+      <div class="header">
+        <div
+          class="user-profile"
+          :style="`background-image: url(${getUser.img})`"
+        >
+          <button>Edit</button>
+        </div>
+
+        <h1>{{ getUser.name }}</h1>
+      </div>
+      <div class="body">
+        <p>Email: {{ getUser.email }}</p>
+        <p>Reward: {{ getUser.rewardPoint }} Coin</p>
+        <p>Role: {{ getUser.isAdmin ? 'Admin' : 'Member' }}</p>
+        <button @click="sigout">Logout</button>
+      </div>
     </div>
+    <form @submit.prevent="editProfile">
+      <input
+        type="file"
+        accept="image/png, image/jpeg"
+        @change="selectFile"
+        ref="file"
+        class="file-input"
+      />
+      <button class="button is-info">UPLOAD</button>
+    </form>
   </section>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import axios from 'axios';
 export default {
   name: 'UserDetail',
+  data() {
+    return {
+      file: ''
+    };
+  },
   methods: {
     ...mapActions(['SignOut']),
     sigout() {
       this.SignOut().then(() => {
         this.$router.replace({ name: 'Home' });
       });
+    },
+    selectFile() {
+      this.file = this.$refs.file.files[0];
+      console.log(this.file);
+    },
+    async editProfile() {
+      const formData = new FormData();
+      formData.append('file', this.file);
+      await axios.patch(
+        `http://localhost:5000/api/user/${this.getUser._id}/update`,
+        formData
+      );
     }
   },
   computed: {
@@ -28,47 +68,66 @@ export default {
 </script>
 
 <style scoped>
-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-div {
-  background-color: #fff;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
-  border-radius: 10px;
-  width: 100%;
-  max-width: 600px;
-  margin: 10px;
+.card {
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
 }
-h1 {
-  background-color: rgb(79, 52, 255);
-  margin: 0;
-  padding: 2rem 5rem;
+.header {
+  background-color: cornflowerblue;
+  display: flex;
+  padding: 2rem 3rem;
   color: #fff;
 }
-p {
-  margin: 20px 0;
-  padding: 0 5rem;
-  font-size: 1.8rem;
+.user-profile {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  margin-right: 15px;
+  overflow: hidden;
+  position: relative;
 }
-button {
-  margin: 0 5rem;
-  margin-bottom: 25px;
-  border: 1px solid #fb3640;
-  background: none;
-  color: #fb3640;
-  border-radius: 15px;
+.user-profile button {
+  position: absolute;
+  top: -20%;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
   font-size: 1.5rem;
   font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.user-profile:hover button {
+  opacity: 100%;
+  top: 0;
+}
+.body {
+  padding: 2rem 3rem;
+}
+.body p {
+  font-size: 2rem;
+}
+.body button {
+  background-color: rgb(255, 32, 32);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border: none;
   padding: 5px 20px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
-button:hover {
-  opacity: 0.8;
-}
-button:active {
+.body button:active {
   transform: scale(0.98);
+}
+.body button:hover {
+  opacity: 0.9;
 }
 </style>

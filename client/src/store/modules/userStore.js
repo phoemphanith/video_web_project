@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 export default {
   state() {
     return {
@@ -14,6 +15,11 @@ export default {
     async fetchUsers(context) {
       const res = await axios.get('http://localhost:5000/api/user');
       context.commit('setUsers', res.data);
+    },
+    async isBanned(context, status) {
+      await axios.patch(`http://localhost:5000/api/user/${status.id}`, {
+        status: status.isActive
+      });
     }
   },
   getters: {

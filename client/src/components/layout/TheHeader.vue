@@ -2,24 +2,24 @@
   <header>
     <nav>
       <h1>
-        <router-link to="/">VideoWeb</router-link>
+        <a href="/">VideoWeb</a>
       </h1>
       <ul>
         <li>
-          <router-link to="/shop">Shop</router-link>
+          <a href="/shop">Shop</a>
         </li>
         <li v-if="isAuth" class="list-container">
           <button class="dropdown" v-on:click="show = !show">
             {{ getUser.name }} <i class="fas fa-angle-down"></i>
           </button>
           <div v-if="show" class="user-list">
-            <router-link to="/admin">Dasboard</router-link>
+            <a href="/admin">Dasboard</a>
             <div class="line"></div>
             <button class="logout" @click="SignOut">Logout</button>
           </div>
         </li>
         <li v-else>
-          <router-link to="/login">Login</router-link>
+          <a href="/login">Login</a>
         </li>
       </ul>
     </nav>

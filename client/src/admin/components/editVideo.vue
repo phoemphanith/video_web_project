@@ -52,12 +52,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCategories', 'getVideos'])
+    ...mapGetters(['getCategories', 'getUserVideos'])
   },
   created() {
     this.fetchCategories();
     const videoId = this.$route.params.id;
-    const singleVideo = this.getVideos.find(video => video._id === videoId);
+    const singleVideo = this.getUserVideos.find(video => video._id === videoId);
 
     this.title = singleVideo.name;
     this.description = singleVideo.description;

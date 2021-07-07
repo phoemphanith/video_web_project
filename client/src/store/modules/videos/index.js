@@ -8,8 +8,10 @@ export default {
   state() {
     return {
       videos: [],
-      vidoe: null,
-      categories: []
+      video: null,
+      categories: [],
+      comments: [],
+      userVideos: []
     };
   },
   mutations: {
@@ -24,6 +26,12 @@ export default {
     },
     removeVideo(state, payload) {
       state.videos = state.videos.filter(video => video._id !== payload);
+    },
+    setComments(state, payload) {
+      state.comments = payload;
+    },
+    setUserVideos(state, payload) {
+      state.userVideos = payload;
     }
   },
   actions: {
@@ -33,7 +41,7 @@ export default {
     },
     async fetchVideo(context, id) {
       const res = await axios.get(`http://localhost:5000/api/videos/${id}`);
-      console.log(res.data);
+
       context.commit('setVideo', res.data);
     },
     async updateVideo(context, obj) {
@@ -51,6 +59,32 @@ export default {
     async fetchCategories(context) {
       const res = await axios.get('http://localhost:5000/api/categories');
       context.commit('setCategories', res.data);
+    },
+    async filterCategories(context, payload) {
+      const res = await axios.get(
+        `http://localhost:5000/api/videos/category/${payload}`
+      );
+      context.commit('setVideos', res.data);
+    },
+    async fetchComments(context, id) {
+      const res = await axios.get(`http://localhost:5000/api/comment/${id}`);
+      context.commit('setComments', res.data);
+    },
+    async uploadComment(context, data) {
+      await axios.patch(
+        `http://localhost:5000/api/videos/${data.videoid}/comment`,
+        {
+          userid: data.userid,
+          comment: data.comment
+        }
+      );
+    },
+    async fetchVideoByUser(context, id) {
+      const res = await axios.get(
+        `http://localhost:5000/api/videos/user/${id}`
+      );
+      console.log(res.data);
+      context.commit('setUserVideos', res.data);
     }
     // async fetchVideo(context) {
     //   const res = await axios.get('http://localhost:5000/api/videos/:id');
@@ -62,17 +96,17 @@ export default {
     getVideos(state) {
       return state.videos;
     },
-    getVideo(state) {
+    getOneVideo(state) {
       return state.video;
     },
     getCategories(state) {
       return state.categories;
+    },
+    getComments(state) {
+      return state.comments;
+    },
+    getUserVideos(state) {
+      return state.userVideos;
     }
-    // getVideo(state) {
-    //   return state.video._id;
-    // }
-    // hasVideos(state) {
-    //   return state.videos && state.videos.length > 0;
-    // }
   }
 };

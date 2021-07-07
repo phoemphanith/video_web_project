@@ -10,7 +10,7 @@
         <tbody>
           <tr>
             <td>Videos Among</td>
-            <td>{{ getVideos.length }} videos</td>
+            <td>{{ getUserVideos.length }} videos</td>
           </tr>
           <tr>
             <td>Views each Videos</td>
@@ -31,7 +31,11 @@
     <div class="video-analytics">
       <h3>Video Analytics</h3>
       <div class="vidList-container">
-        <div class="vidCard-single" v-for="video in getVideos" :key="video._id">
+        <div
+          class="vidCard-single"
+          v-for="video in getUserVideos"
+          :key="video._id"
+        >
           <video class="video-res">
             <source :src="video.video_file" type="video/mp4" />
           </video>
@@ -60,27 +64,27 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['fetchVideos'])
+    ...mapActions(['fetchVideoByUser'])
   },
   computed: {
-    ...mapGetters(['getVideos']),
+    ...mapGetters(['getUserVideos', 'getUser']),
     getViews() {
       let a = 0;
-      this.getVideos.forEach(vid => {
+      this.getUserVideos.forEach(vid => {
         a = a + vid.view;
       });
       return a;
     },
     getRewards() {
       let a = 0;
-      this.getVideos.forEach(vid => {
+      this.getUserVideos.forEach(vid => {
         a = a + vid.rewardPoint;
       });
       return a;
     }
   },
   created() {
-    this.fetchVideos();
+    this.fetchVideoByUser(this.getUser._id);
     const option = { year: 'numeric', month: 'long', day: 'numeric' };
     const today = new Date();
     this.summaryDate = today.toLocaleDateString('en-US', option);

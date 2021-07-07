@@ -15,7 +15,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in getUsers" :key="user._id">
+        <tr
+          v-for="user in getUsers"
+          :key="user._id"
+          :class="`${user.isActive ? '' : 'banned'}`"
+        >
           <td data-label="Id">{{ user._id }}</td>
           <td data-label="Name">{{ user.name }}</td>
           <td data-label="Registered">
@@ -23,11 +27,13 @@
           </td>
           <td data-label="Role">{{ user.isAdmin ? 'Admin' : 'Member' }}</td>
           <td data-label="Status">
-            Active
-            <button class="btn-active">
+            {{ user.isActive ? 'Active' : 'Banned' }}
+            <button class="btn-active" @click="changeStatus(user._id, true)">
               <i class="fas fa-check-circle"></i>
             </button>
-            <button class="btn-ban"><i class="fas fa-ban"></i></button>
+            <button class="btn-ban" @click="changeStatus(user._id, false)">
+              <i class="fas fa-ban"></i>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -40,7 +46,12 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'User',
   methods: {
-    ...mapActions(['fetchUsers'])
+    ...mapActions(['fetchUsers', 'isBanned']),
+    changeStatus(i, status) {
+      this.isBanned({ id: i, isActive: status }).then(() => {
+        this.$router.go();
+      });
+    }
   },
   computed: {
     ...mapGetters(['getUsers'])
@@ -67,9 +78,14 @@ table caption {
 }
 
 table tr {
-  background-color: #f8f8f8;
-  border: 1px solid #ddd;
+  background-color: #e4e4e4;
+  border: 1px solid rgb(236, 236, 236);
   padding: 0.35em;
+}
+
+table tr.banned {
+  opacity: 0.9;
+  background-color: #f8f8f8;
 }
 
 table th,

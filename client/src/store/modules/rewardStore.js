@@ -17,7 +17,6 @@ export default {
   actions: {
     async fetchRewards(context) {
       const res = await axios.get('http://localhost:5000/api/reward');
-      console.log(res.data);
       context.commit('setRewards', res.data);
     },
     async addNewReward(context, obj) {
@@ -29,7 +28,6 @@ export default {
     },
     async deleteReward(context, id) {
       await axios.delete(`http://localhost:5000/api/reward/${id}`);
-
       context.commit('removeReward', id);
     }
   },

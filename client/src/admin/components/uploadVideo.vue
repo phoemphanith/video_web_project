@@ -57,7 +57,7 @@ export default {
       formData.append('title', this.title);
       formData.append('category', this.category);
       formData.append('description', this.description);
-      formData.append('adminUser', '60aca40fd05e833cf4f2e38d');
+      formData.append('adminUser', this.getUser._id);
       if (formData) {
         this.isCompleted = true;
         await axios.post('http://localhost:5000/api/videos/upload', formData);
@@ -67,7 +67,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCategories'])
+    ...mapGetters(['getCategories', 'getUser'])
   },
   created() {
     this.fetchCategories();

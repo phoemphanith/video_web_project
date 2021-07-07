@@ -72,6 +72,13 @@ export default {
       } catch (error) {
         context.commit('set_err', error.response.data.message);
       }
+    },
+    async userBuy(context, data) {
+      context.state.userData.rewardPoint += data;
+      console.log(context.state.userData.rewardPoint);
+      await axios.patch('http://localhost:5000/api/user/userbuy', {
+        rewardPoint: context.state.userData.rewardPoint
+      });
     }
   }
 };

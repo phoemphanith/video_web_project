@@ -26,6 +26,16 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    img: {
+      type: String,
+      required: true,
+      default: "http://localhost:5000/public/pictures/user-solid.svg",
+    },
   },
   { timestamps: true }
 );

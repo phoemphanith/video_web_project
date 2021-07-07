@@ -65,6 +65,21 @@ router.delete(
   })
 );
 
+// @desc     Filter video
+// @route    PATHCH /api/videos/category/:name
+// @access   Public
+router.get(
+  "/category/:name",
+  asyncHandler(async (req, res) => {
+    try {
+      const filterVideo = await Video.find({ category: req.params.name });
+      res.json(filterVideo);
+    } catch (error) {
+      throw new Error(`Video not found ${error}`);
+    }
+  })
+);
+
 // @desc     Upload single video
 // @route    POST /api/videos/upload
 // @access   Public
@@ -154,7 +169,10 @@ router.patch(
   asyncHandler(async (req, res) => {
     try {
       const videoId = req.params.id;
+      const userId = req.body.userId;
+
       const response = await Video.findById(videoId);
+      const user = await User.findById(userId);
 
       response.rewardPoint =
         parseInt(response.rewardPoint) + parseInt(req.body.reward);
@@ -162,6 +180,10 @@ router.patch(
       await Video.updateOne(
         { _id: req.params.id },
         { rewardPoint: response.rewardPoint }
+      );
+      await User.updateOne(
+        { _id: userId },
+        { rewardPoint: parseInt(user.rewardPoint) - parseInt(req.body.reward) }
       );
 
       res.json({ message: `Now,video has ${response.rewardPoint} coins.` });
@@ -184,7 +206,7 @@ router.patch(
 
     const response = await Comment.find({ video_entry_id: videoId });
 
-    if (response === undefined || response.length == 0) {
+    if (response === undefined || response.length === 0) {
       const newComment = new Comment({
         video_entry_id: videoId,
         comments: [
@@ -217,6 +239,23 @@ router.patch(
       } catch (error) {
         throw new Error(error);
       }
+    }
+  })
+);
+
+// @desc     Fetch video by user
+// @route    PATCH /api/user/:idt
+// @access   Public
+router.get(
+  "/user/:id",
+  asyncHandler(async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const response = await Video.find({ user: userId });
+
+      res.json(response);
+    } catch (error) {
+      throw new Error(`Video not found ${error}`);
     }
   })
 );

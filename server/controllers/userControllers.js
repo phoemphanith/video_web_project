@@ -29,6 +29,7 @@ const userLogin = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       rewardPoint: user.rewardPoint,
+      img: user.img,
       token: generateToken(user._id),
     });
   } else {
@@ -81,9 +82,36 @@ const getUserProfile = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      img: user.img,
+      rewardPoint: user.rewardPoint,
     });
   } else {
     res.status(401);
+    throw new Error("User not found");
+  }
+});
+// @desc     user buy coin
+// @route    PATCH /api/user
+// @access   Private
+const userBuyCoin = asyncHandler(async (req, res) => {
+  const { rewardPoint } = req.body;
+
+  await User.updateOne({ _id: req.user._id }, { rewardPoint: rewardPoint });
+  console.log(rewardPoint);
+});
+
+// @desc     Banned user
+// @route    PATCH /api/user
+// @access   Private
+const banUser = asyncHandler(async (req, res) => {
+  const status = req.body.status;
+  const userId = req.params.id;
+  try {
+    console.log(status);
+    await User.updateOne({ _id: userId }, { isActive: status });
+    res.json({ message: `Success ${status ? "Active" : "Banned"}` });
+  } catch (error) {
+    res.status(404);
     throw new Error("User not found");
   }
 });
@@ -93,4 +121,6 @@ module.exports = {
   userRegister,
   getAllUser,
   getUserProfile,
+  userBuyCoin,
+  banUser,
 };

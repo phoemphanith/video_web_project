@@ -69,7 +69,10 @@
                   <div class="col-auto mycol">
                     <img
                       class="profile rounded-circle myimg"
-                      src="https://images.unsplash.com/photo-1494959764136-6be9eb3c261e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
+                      :src="
+                        getUsers.find(user => user._id === selectedVideo.user)
+                          .img
+                      "
                       width="50"
                       height="50"
                     />
@@ -109,32 +112,49 @@
                     aria-live="assertive"
                     aria-atomic="true"
                     data-autohide="false"
+                    v-for="comment in getComments.comments"
+                    :key="comment._id"
                   >
                     <div class="toast-header">
                       <img
-                        src="https://images.unsplash.com/photo-1494959764136-6be9eb3c261e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
+                        :src="
+                          getUsers.find(user => user._id === comment.user).img
+                        "
                         class="rounded mr-2"
                         alt="..."
                         width="30"
                         height="30"
                       />
-                      <strong class="mr-auto"> James Doe </strong>
-                      <small class="text-muted">11 mins ago</small>
+                      <strong class="mr-auto">
+                        {{
+                          getUsers.find(user => user._id === comment.user).name
+                        }}
+                      </strong>
+                      <small class="text-muted">
+                        - On |
+                        {{
+                          new Date(comment.created_on).toLocaleDateString()
+                        }}</small
+                      >
                     </div>
                     <p class="toast-body">
-                      Hello, world! This is a toast message.
+                      {{ comment.comment }}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <form class="w-100 px-4 py-4 bg-light border-top">
+              <form
+                @submit.prevent="PostComment"
+                class="w-100 px-4 py-4 bg-light border-top"
+              >
                 <div class="form-row align-items-center">
                   <div class="col">
                     <textarea
                       class="form-control"
                       id="exampleFormControlTextarea1"
                       rows="2"
+                      v-model="comment"
                     ></textarea>
                   </div>
                   <div class="col">
@@ -156,7 +176,14 @@
       <p>Please Sign In to make your opinion count.</p>
       <div class="alert-action">
         <button class="cancel" @click="cancel">CANCEL</button>
-        <button class="signin" @click="goToSignin">SING IN</button>
+        <a href="/login" class="signin" @click="goToSignin">SING IN</a>
+      </div>
+    </div>
+    <div class="loginAlert" v-if="shopActive">
+      <p>Please Go to Shop to purchase your Coins.</p>
+      <div class="alert-action">
+        <button class="cancel" @click="cancelShop">CANCEL</button>
+        <a href="/shop" class="signin">SHOP</a>
       </div>
     </div>
   </div>
@@ -179,11 +206,13 @@ export default {
       coins: 0,
       rewards: null,
       count: 0,
-      active: false
+      active: false,
+      comment: '',
+      shopActive: false
     };
   },
   methods: {
-    ...mapActions(['fetchUsers']),
+    ...mapActions(['fetchUsers', 'fetchComments', 'uploadComment']),
     increaseLike: async function(clickedLike) {
       if (this.isAuth) {
         if (clickedLike) {
@@ -234,31 +263,60 @@ export default {
         this.active = !this.active;
       }
     },
-    rewardCoins: function() {
-      this.selectedVideo.rewardPoint =
-        parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
-      this.coins = 0;
+    rewardCoins: async function() {
+      if (this.getUser.rewardPoint > this.coins) {
+        this.selectedVideo.rewardPoint =
+          parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
+        await axios.patch(
+          `http://localhost:5000/api/videos/${this.$route.params.id}/reward`,
+          { reward: this.coins, userId: this.getUser._id }
+        );
+        this.coins = 0;
+        this.shopActive = false;
+      } else {
+        this.coins = 0;
+        this.shopActive = true;
+      }
     },
     cancel: function() {
       this.active = !this.active;
     },
-    goToSignin: function() {
-      this.$router.replace({ name: 'Login' });
+    cancelShop: function() {
+      this.shopActive = !this.shopActive;
+    },
+    PostComment: function() {
+      if (this.comment.length > 0) {
+        if (this.isAuth) {
+          this.uploadComment({
+            videoid: this.$route.params.id,
+            userid: this.getUser._id,
+            comment: this.comment
+          }).then(() => {
+            this.$router.go();
+          });
+        } else {
+          this.active = !this.active;
+        }
+      } else {
+        console.log('Post comment cannot empty!');
+      }
     }
   },
   computed: {
-    ...mapGetters(['getVideos', 'getUsers', 'isAuth'])
+    ...mapGetters(['getVideos', 'getUsers', 'isAuth', 'getComments', 'getUser'])
   },
   async created() {
+    this.fetchUsers();
     // this.selectedVideo = this.$store.getters['videos/videos'].find(
     //   video => video.id === this.id
     // );
-    this.selectedVideo = this.getVideos.find(
-      video => video._id === this.$route.params.id
+    const video = await axios.get(
+      `http://localhost:5000/api/videos/${this.$route.params.id}`
     );
+    this.selectedVideo = video.data;
     const res = await axios.get('http://localhost:5000/api/reward');
-    console.log(res.data);
     this.rewards = res.data;
+    this.fetchComments(this.$route.params.id);
   }
 };
 </script>
@@ -407,7 +465,8 @@ h5.font-weight-bold {
   font-size: 1.5rem;
   font-weight: 600;
 }
-.loginAlert button {
+.loginAlert button,
+.loginAlert a {
   font-size: 1.4rem;
   font-weight: 600;
   border: none;
@@ -421,8 +480,9 @@ h5.font-weight-bold {
   display: flex;
   justify-content: flex-end;
 }
-button.signin {
+a.signin {
   color: red;
+  text-decoration: none;
 }
 .btn-primary {
   margin-top: 5px;
