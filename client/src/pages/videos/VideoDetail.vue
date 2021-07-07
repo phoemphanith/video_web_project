@@ -236,6 +236,7 @@ export default {
         );
       } else {
         this.active = !this.active;
+        console.log(this.active);
       }
     },
     increaseDislike: async function(clickedDislike) {
@@ -264,18 +265,22 @@ export default {
       }
     },
     rewardCoins: async function() {
-      if (this.getUser.rewardPoint > this.coins) {
-        this.selectedVideo.rewardPoint =
-          parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
-        await axios.patch(
-          `http://localhost:5000/api/videos/${this.$route.params.id}/reward`,
-          { reward: this.coins, userId: this.getUser._id }
-        );
-        this.coins = 0;
-        this.shopActive = false;
+      if (this.isAuth) {
+        if (this.getUser.rewardPoint > this.coins) {
+          this.selectedVideo.rewardPoint =
+            parseInt(this.selectedVideo.rewardPoint) + parseInt(this.coins);
+          await axios.patch(
+            `http://localhost:5000/api/videos/${this.$route.params.id}/reward`,
+            { reward: this.coins, userId: this.getUser._id }
+          );
+          this.coins = 0;
+          this.shopActive = false;
+        } else {
+          this.coins = 0;
+          this.shopActive = true;
+        }
       } else {
-        this.coins = 0;
-        this.shopActive = true;
+        this.active = true;
       }
     },
     cancel: function() {
