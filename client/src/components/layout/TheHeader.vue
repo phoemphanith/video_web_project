@@ -15,7 +15,7 @@
           <div v-if="show" class="user-list">
             <a href="/admin">Dasboard</a>
             <div class="line"></div>
-            <button class="logout" @click="SignOut">Logout</button>
+            <button class="logout" @click="logout">Logout</button>
           </div>
         </li>
         <li v-else>
@@ -36,7 +36,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['SignOut'])
+    ...mapActions(['SignOut']),
+    logout() {
+      this.SignOut();
+    }
   },
   computed: {
     ...mapGetters(['isAuth', 'getUser'])

@@ -18,6 +18,10 @@
         <button @click="sigout">Logout</button>
       </div>
     </div>
+    <!-- TODO: 
+      1. when click edit upload pop up
+      2. style edit profile form
+     -->
     <form @submit.prevent="editProfile">
       <input
         type="file"

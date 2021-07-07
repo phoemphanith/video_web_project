@@ -5,7 +5,8 @@ export default {
     return {
       token: null,
       userData: null,
-      errmessage: null
+      errmessage: null,
+      isActive: true
     };
   },
   getters: {
@@ -17,6 +18,9 @@ export default {
     },
     isAuth(state) {
       return state.token && state.userData;
+    },
+    checkActive(state) {
+      return state.isActive;
     }
   },
   mutations: {
@@ -28,6 +32,9 @@ export default {
     },
     set_err(state, payload) {
       state.errmessage = payload;
+    },
+    set_active(state, payload) {
+      state.isActive = payload;
     }
   },
   actions: {
@@ -38,6 +45,7 @@ export default {
           formData
         );
         context.dispatch('Attempt', res.data.token);
+        context.commit('set_active', res.data.isActive);
         context.commit('set_err', null);
       } catch (error) {
         context.commit('set_err', error.response.data.message);
@@ -55,6 +63,7 @@ export default {
       try {
         const res = await axios.get('http://localhost:5000/api/user/profile');
         commit('set_user', res.data);
+        commit('set_active', res.data.isActive);
       } catch (error) {
         commit('set_token', null);
         commit('set_user', null);

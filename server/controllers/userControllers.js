@@ -30,6 +30,7 @@ const userLogin = asyncHandler(async (req, res) => {
       isAdmin: user.isAdmin,
       rewardPoint: user.rewardPoint,
       img: user.img,
+      isActive: user.isActive,
       token: generateToken(user._id),
     });
   } else {
@@ -62,6 +63,8 @@ const userRegister = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      img: user.img,
+      isActive: user.isActive,
       token: generateToken(user._id),
     });
   } else {
@@ -83,6 +86,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       img: user.img,
+      isActive: user.isActive,
       rewardPoint: user.rewardPoint,
     });
   } else {

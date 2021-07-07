@@ -52,11 +52,15 @@ export default {
   },
   methods: {
     ...mapActions(['SignIn']),
-    submit() {
+    async submit() {
       if (this.form) {
-        this.SignIn(this.form).then(() => {
-          this.$router.replace({ name: 'Home' });
-        });
+        try {
+          this.SignIn(this.form).then(() => {
+            this.$router.push('/');
+          });
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   },

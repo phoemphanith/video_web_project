@@ -18,17 +18,34 @@ import UserInfo from './admin/userInformation.vue';
 import UploadVideo from './admin/components/uploadVideo.vue';
 import editVideo from './admin/components/editVideo.vue';
 
+import userBanned from './pages/auth/userbanned.vue';
+
 import store from '@/store';
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
-    { path: '/', name: 'Home', redirect: '/videos' },
-    { path: '/videos', component: videos },
+    {
+      path: '/',
+      name: 'Home',
+      redirect: '/videos'
+    },
+    {
+      path: '/videos',
+      name: 'Videos',
+      component: videos,
+      beforeEnter: (to, from, next) => {
+        if (!store.getters['checkActive']) {
+          return next({ name: 'Warming' });
+        }
+        next();
+      }
+    },
     { path: '/videos/:id', component: videosDetail, props: true },
     { path: '/login', name: 'Login', component: login },
     { path: '/signup', component: SignUp },
     { path: '/shop', component: Shop },
+    { path: '/warming', name: 'Warming', component: userBanned },
     {
       path: '/admin',
       component: Admin,
