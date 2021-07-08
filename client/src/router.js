@@ -13,6 +13,7 @@ import Reward from './admin/reward.vue';
 import User from './admin/user.vue';
 import Categories from './admin/categories.vue';
 import UserInfo from './admin/userInformation.vue';
+import ReportList from './admin/reportList.vue';
 
 //video component
 import UploadVideo from './admin/components/uploadVideo.vue';
@@ -67,7 +68,8 @@ const router = createRouter({
         { path: 'categories', component: Categories },
         { path: 'reward', component: Reward },
         { path: 'user', component: User },
-        { path: 'details', component: UserInfo }
+        { path: 'details', component: UserInfo },
+        { path: 'reports', component: ReportList }
       ]
     }
   ]

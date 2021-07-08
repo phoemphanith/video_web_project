@@ -5,6 +5,9 @@
     <router-link to="/admin/videos">
       <i class="fas fa-file-video"></i> Videos
     </router-link>
+    <router-link to="/admin/reports">
+      <i class="fas fa-exclamation-triangle"></i> Videos Report List
+    </router-link>
     <template v-if="getUser.isAdmin">
       <router-link to="/admin/Categories">
         <i class="fas fa-tags"></i> Categories

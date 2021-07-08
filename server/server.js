@@ -9,6 +9,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const userRoutes = require("./routes/userRoutes");
 const rewardRoutes = require("./routes/rewardRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const reportRoutes = require("./routes/reportRoute");
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/reward", rewardRoutes);
 app.use("/api/comment", commentRoutes);
+app.use("/api/report", reportRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

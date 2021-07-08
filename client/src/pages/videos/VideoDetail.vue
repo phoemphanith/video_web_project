@@ -1,5 +1,9 @@
 <template>
   <div>
+    <section v-if="reportActive">
+      <report :user="getUser._id" :video="selectedVideo._id"></report>
+    </section>
+
     <the-header></the-header>
     <body class="p-4">
       <div class="container-sm bg-white rounded-lg overflow-hidden shadow">
@@ -61,7 +65,9 @@
                         </option>
                       </select>
                     </form>
-                    <button><i class="fas fa-share"></i> Share</button>
+                    <button @click="toggleReport">
+                      <i class="fas fa-exclamation"></i> Report
+                    </button>
                   </div>
                 </div>
                 <hr />
@@ -194,9 +200,11 @@ import axios from 'axios';
 
 import { mapActions, mapGetters } from 'vuex';
 import TheHeader from '../../components/layout/TheHeader.vue';
+import Report from '../../components/report.vue';
 export default {
   components: {
-    TheHeader
+    TheHeader,
+    Report
   },
   data() {
     return {
@@ -208,7 +216,8 @@ export default {
       count: 0,
       active: false,
       comment: '',
-      shopActive: false
+      shopActive: false,
+      reportActive: false
     };
   },
   methods: {
@@ -305,6 +314,9 @@ export default {
       } else {
         console.log('Post comment cannot empty!');
       }
+    },
+    toggleReport() {
+      this.reportActive = !this.reportActive;
     }
   },
   computed: {
