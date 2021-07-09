@@ -7,7 +7,8 @@
     <table>
       <thead>
         <tr>
-          <th scope="col">Id</th>
+          <th scope="col">&#8470;</th>
+          <th>Email</th>
           <th scope="col">Name</th>
           <th scope="col">Registered</th>
           <th scope="col">Role</th>
@@ -16,11 +17,12 @@
       </thead>
       <tbody>
         <tr
-          v-for="user in getUsers"
-          :key="user._id"
+          v-for="(user, index) in getUsers"
+          :key="index"
           :class="`${user.isActive ? '' : 'banned'}`"
         >
-          <td data-label="Id">{{ user._id }}</td>
+          <td data-label="Id">{{ index + 1 }}</td>
+          <td data-lable="Email">{{ user.email }}</td>
           <td data-label="Name">{{ user.name }}</td>
           <td data-label="Registered">
             {{ new Date(user.createdAt).toLocaleDateString() }}

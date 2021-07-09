@@ -1,5 +1,19 @@
 <template>
   <div>
+    <div class="loginAlert" v-if="active">
+      <p>Please Sign In to make your opinion count.</p>
+      <div class="alert-action">
+        <button class="cancel" @click="cancel">CANCEL</button>
+        <a href="/login" class="signin" @click="goToSignin">SING IN</a>
+      </div>
+    </div>
+    <div class="loginAlert" v-if="shopActive">
+      <p>Please Go to Shop to purchase your Coins.</p>
+      <div class="alert-action">
+        <button class="cancel" @click="cancelShop">CANCEL</button>
+        <a href="/shop" class="signin">SHOP</a>
+      </div>
+    </div>
     <section v-if="reportActive">
       <report :user="getUser._id" :video="selectedVideo._id"></report>
     </section>
@@ -65,7 +79,7 @@
                         </option>
                       </select>
                     </form>
-                    <button @click="addMyFavorite(selectedVideo._id)">
+                    <button @click="addToFavorite(selectedVideo._id)">
                       <i class="fas fa-plus-circle"></i>
                     </button>
                     <button @click="toggleReport">
@@ -181,20 +195,6 @@
         </div>
       </div>
     </body>
-    <div class="loginAlert" v-if="active">
-      <p>Please Sign In to make your opinion count.</p>
-      <div class="alert-action">
-        <button class="cancel" @click="cancel">CANCEL</button>
-        <a href="/login" class="signin" @click="goToSignin">SING IN</a>
-      </div>
-    </div>
-    <div class="loginAlert" v-if="shopActive">
-      <p>Please Go to Shop to purchase your Coins.</p>
-      <div class="alert-action">
-        <button class="cancel" @click="cancelShop">CANCEL</button>
-        <a href="/shop" class="signin">SHOP</a>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -324,7 +324,18 @@ export default {
       }
     },
     toggleReport() {
-      this.reportActive = !this.reportActive;
+      if (this.isAuth) {
+        this.reportActive = !this.reportActive;
+      } else {
+        this.active = true;
+      }
+    },
+    addToFavorite(id) {
+      if (this.isAuth) {
+        this.addMyFavorite(id);
+      } else {
+        this.active = true;
+      }
     }
   },
   computed: {

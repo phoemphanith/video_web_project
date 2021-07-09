@@ -46,7 +46,7 @@
                 `${video.view} views, ${video.like} like, ${video.dislike} dislike, ${video.rewardPoint} coin`
               }}
             </p>
-            <!-- <a :href="`/videos/${video._id}`">Watch Video</a> -->
+            <a :href="`/videos/${video._id}`">Watch Video</a>
           </div>
         </div>
       </div>
