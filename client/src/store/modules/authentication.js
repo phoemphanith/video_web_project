@@ -6,7 +6,8 @@ export default {
       token: null,
       userData: null,
       errmessage: null,
-      isActive: true
+      isActive: true,
+      myFavorite: []
     };
   },
   getters: {
@@ -21,6 +22,9 @@ export default {
     },
     checkActive(state) {
       return state.isActive;
+    },
+    getMyFavorite(state) {
+      return state.myFavorite;
     }
   },
   mutations: {
@@ -35,6 +39,9 @@ export default {
     },
     set_active(state, payload) {
       state.isActive = payload;
+    },
+    set_favorite(state, payload) {
+      state.myFavorite = payload;
     }
   },
   actions: {
@@ -86,6 +93,24 @@ export default {
       await axios.patch(`http://localhost:5000/api/user/${data.id}/userbuy`, {
         rewardPoint: data.point
       });
+    },
+    async fetchFavorite(context) {
+      try {
+        const res = await axios.get('http://localhost:5000/api/user/favorite');
+        context.commit('set_favorite', res.data);
+      } catch (error) {
+        context.commit('set_favorite', []);
+      }
+    },
+    async addMyFavorite(context, id) {
+      try {
+        await axios.patch('http://localhost:5000/api/user/favorite', {
+          videoId: id
+        });
+        alert('Add to favorite successfully');
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 };

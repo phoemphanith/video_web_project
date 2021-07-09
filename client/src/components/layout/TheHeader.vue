@@ -14,6 +14,7 @@
           </button>
           <div v-if="show" class="user-list">
             <a href="/admin">Dasboard</a>
+            <a href="/favorites">My Favorite</a>
             <div class="line"></div>
             <button class="logout" @click="logout">Logout</button>
           </div>
@@ -143,7 +144,7 @@ li {
 }
 .user-list a {
   border: none;
-  padding: 0;
+  padding: 5px 0;
 }
 .user-list a:hover {
   border: none;

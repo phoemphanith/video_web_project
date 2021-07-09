@@ -65,8 +65,11 @@
                         </option>
                       </select>
                     </form>
+                    <button @click="addMyFavorite(selectedVideo._id)">
+                      <i class="fas fa-plus-circle"></i>
+                    </button>
                     <button @click="toggleReport">
-                      <i class="fas fa-exclamation"></i> Report
+                      <i class="fas fa-exclamation-circle"></i>
                     </button>
                   </div>
                 </div>
@@ -221,7 +224,12 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['fetchUsers', 'fetchComments', 'uploadComment']),
+    ...mapActions([
+      'fetchUsers',
+      'fetchComments',
+      'uploadComment',
+      'addMyFavorite'
+    ]),
     increaseLike: async function(clickedLike) {
       if (this.isAuth) {
         if (clickedLike) {
@@ -355,7 +363,7 @@ body {
   background: none;
   border: none;
   padding: 10px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 1px;
   margin: 5px;
 }
@@ -378,7 +386,7 @@ body {
 .gift-container select {
   border: none;
   background-color: rgba(0, 0, 0, 0);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   cursor: pointer;
   height: 90%;
 }

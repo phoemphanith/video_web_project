@@ -5,6 +5,7 @@ import videosDetail from './pages/videos/VideoDetail.vue';
 import login from './pages/auth/Login.vue';
 import SignUp from './pages/auth/register.vue';
 import Shop from './pages/shop/Shop.vue';
+import FavoriteVideo from './pages/videos/myFavorite.vue';
 
 import Admin from './admin/admin.vue';
 import Dashboard from './admin/dashboard.vue';
@@ -47,6 +48,7 @@ const router = createRouter({
     { path: '/signup', component: SignUp },
     { path: '/shop', component: Shop },
     { path: '/warming', name: 'Warming', component: userBanned },
+    { path: '/favorites', name: 'MyFavorite', component: FavoriteVideo },
     {
       path: '/admin',
       component: Admin,

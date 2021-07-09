@@ -36,6 +36,15 @@ const userSchema = mongoose.Schema(
       required: true,
       default: "http://localhost:5000/public/pictures/user-solid.svg",
     },
+    favorite_video: [
+      {
+        video_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Video",
+          unique: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

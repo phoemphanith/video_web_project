@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken");
 const User = require("../models/userModel");
+const Video = require("../models/videosModel");
 
 //TODO: Protect data route
 // @desc     fetch all users
@@ -124,6 +125,35 @@ const banUser = asyncHandler(async (req, res) => {
   }
 });
 
+const favoriteVideo = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.favorite_video = user.favorite_video.push({
+      video_id: req.body.videoId,
+    });
+    await User.updateOne(
+      { _id: req.user._id },
+      { favorite_video: user.favorite_video }
+    );
+    res.json({ message: "Add successfully" });
+  } catch (error) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+const getMyFavorites = asyncHandler(async (req, res) => {
+  try {
+    const myfavorites = await User.findById(req.user._id);
+    const videosId = myfavorites.favorite_video.map((v) => v.video_id);
+    const videos = await Video.find().where("_id").in(videosId).exec();
+    res.json(videos);
+  } catch (error) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
 module.exports = {
   userLogin,
   userRegister,
@@ -131,4 +161,6 @@ module.exports = {
   getUserProfile,
   userBuyCoin,
   banUser,
+  favoriteVideo,
+  getMyFavorites,
 };

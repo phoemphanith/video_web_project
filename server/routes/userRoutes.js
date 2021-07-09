@@ -10,6 +10,8 @@ const {
   getUserProfile,
   userBuyCoin,
   banUser,
+  favoriteVideo,
+  getMyFavorites,
 } = require("../controllers/userControllers");
 const protect = require("../middleware/authMiddleware");
 
@@ -49,6 +51,10 @@ router.patch("/:id/update", upload.single("file"), async (req, res, next) => {
 
 router.route("/").post(userRegister);
 router.post("/login", userLogin);
+router
+  .route("/favorite")
+  .patch(protect, favoriteVideo)
+  .get(protect, getMyFavorites);
 router.patch("/:id", banUser);
 
 router.route("/profile").get(protect, getUserProfile);
