@@ -1,51 +1,29 @@
 <template>
   <div>
     <the-header></the-header>
+    <Checkout v-if="isActive"></Checkout>
     <div class="container mt-4 mb-5">
       <div class="row">
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              class="card-img-top"
-              src="../../../public/PinClipart.com_falling-coins-clipart_5335734.png"
-              alt="Card image cap"
-            />
-            <div class="card-block p-3">
-              <h4 class="card-title">50 Coins</h4>
-              <p class="card-text">Price: 1$</p>
-              <button class="btn btn-primary" @click="buyCoin(50)">
-                Buy now
-              </button>
+        <div
+          class="col-3 col-sm-6 col-md-4"
+          v-for="reward in getRewards"
+          :key="reward._id"
+        >
+          <div class="my-card">
+            <div
+              class="coin-card"
+              :style="`border-color: ${reward.border_color};`"
+            >
+              <i class="fas fa-fan"> {{ reward.rewardPoint }}</i>
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              class="card-img-top"
-              src="../../../public/PinClipart.com_gold-coins-clip-art_5614978.png"
-              alt="Card image cap"
-            />
             <div class="card-block p-3">
-              <h4 class="card-title">150 Coins</h4>
-              <p class="card-text">Price: 2$</p>
-              <button class="btn btn-primary" @click="buyCoin(150)">
-                Buy now
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              class="card-img-top"
-              src="../../../public/PinClipart.com_money-stack-clipart_5665420.png"
-              alt="Card image cap"
-            />
-            <div class="card-block p-3">
-              <h4 class="card-title">500 Coins</h4>
-              <p class="card-text">Price: 5$</p>
-              <button class="btn btn-primary" @click="buyCoin(500)">
+              <h4 class="card-title">{{ reward.rewardPoint }} Coins</h4>
+              <p>{{ reward.name }}</p>
+              <p class="card-text">Price: {{ reward.price }}$</p>
+              <button
+                class="btn btn-primary"
+                @click="buyCoin(reward.rewardPoint)"
+              >
                 Buy now
               </button>
             </div>
@@ -66,24 +44,29 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import TheHeader from '../../components/layout/TheHeader.vue';
+import Checkout from './checkout.vue';
 export default {
   name: 'shop',
   components: {
-    TheHeader
+    TheHeader,
+    Checkout
   },
   data() {
     return {
-      active: false
+      active: false,
+      isActive: false
     };
   },
   methods: {
-    ...mapActions(['fetchUsers', 'userBuy']),
+    ...mapActions(['fetchUsers', 'userBuy', 'fetchRewards']),
     buyCoin: function(myCoin) {
       if (this.isAuth) {
         this.active = false;
         var currentPoint = this.getUser.rewardPoint + myCoin;
         console.log(currentPoint);
-        this.userBuy({ id: this.getUser._id, point: currentPoint });
+        this.userBuy({ id: this.getUser._id, point: currentPoint }).then(() => {
+          this.isActive = true;
+        });
       } else {
         this.active = true;
       }
@@ -93,7 +76,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getUser', 'isAuth'])
+    ...mapGetters(['getUser', 'isAuth', 'getRewards'])
+  },
+  created() {
+    this.fetchRewards();
   }
 };
 </script>
@@ -112,9 +98,32 @@ button {
   text-align: center;
 }
 
-.card {
-  border: purple solid 1px;
-  margin: 5% 0 0 0;
+.my-card {
+  width: 100%;
+
+  margin: 2rem 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.my-card::before {
+  content: '';
+  background-image: url('../../../public/PinClipart.com_money-stack-clipart_5665420.png');
+  background-repeat: no-repeat;
+  background-size: 35%;
+  background-position: center;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.1;
+  height: 200px;
+  z-index: -2;
 }
 
 .loginAlert {
@@ -155,6 +164,17 @@ a.signin {
   margin-top: 5px;
   width: 100px;
 }
+.coin-card {
+  border: 3px solid;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
 @media only screen and (min-width: 768px) {
   .border-md-left {
     border-left: 1px solid #dee2e6 !important;
